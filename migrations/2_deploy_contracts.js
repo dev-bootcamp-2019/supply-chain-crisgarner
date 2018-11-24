@@ -1,7 +1,5 @@
-//var SimpleBank = artifacts.require("./SimpleBank.sol");
 var SupplyChain = artifacts.require("./SupplyChain.sol");
 
 module.exports = function(deployer) {
-  //deployer.deploy(SimpleBank);
-  deployer.deploy(SupplyChain);
+  deployer.deploy(SupplyChain, web3.eth.accounts[0]);
 };
