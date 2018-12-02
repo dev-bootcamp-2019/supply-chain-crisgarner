@@ -2,7 +2,7 @@ pragma solidity ^0.4.23;
 
 contract SupplyChain {
 
-  /* set owner */
+  /* set owner  */
   address owner;
 
 
