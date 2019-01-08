@@ -1,4 +1,4 @@
-pragma solidity ^0.4.23;
+pragma solidity ^0.5.0;
 
 contract SupplyChain {
 
@@ -38,8 +38,8 @@ contract SupplyChain {
     uint sku;
     uint price;
     State state;
-    address seller;
-    address buyer;
+    address payable seller;
+    address payable buyer;
   }
 
   /* Create 4 events with the same name as each possible State (see above)
@@ -102,9 +102,9 @@ contract SupplyChain {
     skuCount = 0;
   }
 
-  function addItem(string _name, uint _price) public returns(bool){
+  function addItem(string memory _name, uint _price) public returns(bool){
     emit ForSale(skuCount);
-    items[skuCount] = Item({name: _name, sku: skuCount, price: _price, state: State.ForSale, seller: msg.sender, buyer: 0});
+    items[skuCount] = Item({name: _name, sku: skuCount, price: _price, state: State.ForSale, seller: msg.sender, buyer: address(0)});
     skuCount = skuCount + 1;
     return true;
   }
@@ -115,12 +115,11 @@ contract SupplyChain {
     if the buyer paid enough, and check the value after the function is called to make sure the buyer is
     refunded any excess ether sent. Remember to call the event associated with this function!*/
 
-  function buyItem(uint sku) forSale(sku) checkValue(sku) paidEnough(price)
+  function buyItem(uint sku) forSale(sku) checkValue(sku) paidEnough(items[sku].price)
     public payable
   {
-    uint price = items[sku].price;
     items[sku].buyer = msg.sender;
-    items[sku].seller.transfer(price);
+    items[sku].seller.transfer(items[sku].price);
     items[sku].state = State.Sold;
     emit Sold(sku);
   }
@@ -144,7 +143,7 @@ contract SupplyChain {
   }
 
   /* We have these functions completed so we can run tests, just ignore it :) */
-  function fetchItem(uint _sku) public view returns (string name, uint sku, uint price, uint state, address seller, address buyer) {
+  function fetchItem(uint _sku) public view returns (string memory name, uint sku, uint price, uint state, address seller, address buyer) {
     name = items[_sku].name;
     sku = items[_sku].sku;
     price = items[_sku].price;
